@@ -57,6 +57,7 @@ export default function PortfolioHero({ data }) {
           box-shadow:0 0 30px rgba(168,85,247,0.2);
         }
         .pl-scroll-btn { background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px; animation:pl-bob 2.5s ease-in-out infinite; }
+        @media(max-width:768px) { .pl-hero-grid { grid-template-columns:1fr!important; padding:5rem 1.25rem 3rem!important; gap:2.5rem!important; } .pl-two-col { display:block!important; } .pl-two-col>*{margin-bottom:2rem;} section>div{padding-left:1.25rem!important;padding-right:1.25rem!important;} }
       `}</style>
 
       {/* ── Lightning crack SVG background ── */}
@@ -104,7 +105,7 @@ export default function PortfolioHero({ data }) {
       <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg, rgba(168,85,247,0.06), rgba(34,211,238,0.04))", animation:"pl-flash 8s ease-in-out infinite", pointerEvents:"none" }} />
 
       {/* ── Content ── */}
-      <div style={{
+      <div className="pl-hero-grid" style={{
         position:"relative", zIndex:10, maxWidth:"1200px", margin:"0 auto",
         padding:"100px 1.5rem 2rem",
         display:"grid",
@@ -183,7 +184,7 @@ export default function PortfolioHero({ data }) {
               <FaEnvelope style={{ fontSize:"13px" }} /> Get In Touch
             </button>
             {data?.resumeBase64 && (
-              <a href="/resume.pdf" download="Resume.pdf" className="pl-cta-secondary">
+              <a href={data.resumeBase64 ? `data:application/pdf;base64,${data.resumeBase64}` : "resume.pdf"} download="Resume.pdf" className="pl-cta-secondary">
                 <FaDownload style={{ fontSize:"12px" }} /> Download Resume
               </a>
             )}
@@ -197,11 +198,10 @@ export default function PortfolioHero({ data }) {
             style={{ position:"relative", flexShrink:0 }}
             className="hidden md:block"
           >
-            {/* Outer spin ring */}
+            {/* Static gradient ring */}
             <div style={{
               width:"280px", height:"280px", borderRadius:"50%",
               background:"conic-gradient(from 0deg, #a855f7, #22d3ee, #7c3aed, #a855f7)",
-              animation:"pl-spin 6s linear infinite",
               display:"flex", alignItems:"center", justifyContent:"center",
               boxShadow:"0 0 60px rgba(168,85,247,0.4), 0 0 120px rgba(168,85,247,0.15)",
             }}>
@@ -217,15 +217,6 @@ export default function PortfolioHero({ data }) {
                 />
               </div>
             </div>
-            {/* Orbiting dot */}
-            <div style={{
-              position:"absolute", top:"50%", left:"50%",
-              width:"10px", height:"10px", borderRadius:"50%",
-              background:"#22d3ee",
-              boxShadow:"0 0 16px rgba(34,211,238,0.9)",
-              transform:"translate(-50%,-50%)",
-              animation:"pl-orbit 6s linear infinite",
-            }} />
             {/* Floating bolt decorations */}
             <div style={{ position:"absolute", top:"-16px", right:"-8px", color:"#a855f7", opacity:0.7, animation:"pl-pulse 3s ease-in-out infinite" }}>
               <FaBolt size={22} />

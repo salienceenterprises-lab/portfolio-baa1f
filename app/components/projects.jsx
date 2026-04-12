@@ -1,121 +1,151 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
-import { FaBolt, FaGithub, FaExternalLinkAlt, FaCode } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaTerminal } from "react-icons/fa";
 
 export default function PortfolioProjects({ data }) {
-  const items = data?.projects;
-  if (!items || !Array.isArray(items) || items.length === 0) return null;
+  if (!data?.projects?.length) return null;
 
   return (
-    <section id="projects" style={{ background:"#05020f", padding:"8rem 1.5rem", position:"relative", overflow:"hidden" }}>
-      <style>{`
-        .pl-proj-card {
-          position:relative; height:100%;
-          border:1px solid rgba(168,85,247,0.1);
-          border-radius:14px; padding:2rem;
-          background:rgba(168,85,247,0.03);
-          display:flex; flex-direction:column;
-          transition:all 0.35s ease; overflow:hidden;
-        }
-        .pl-proj-card::before {
-          content:'';
-          position:absolute; top:0; left:0; right:0; height:2px;
-          background:linear-gradient(90deg, #a855f7, #22d3ee);
-          transform:scaleX(0); transform-origin:left;
-          transition:transform 0.4s ease;
-        }
-        .pl-proj-card:hover {
-          border-color:rgba(168,85,247,0.3);
-          background:rgba(168,85,247,0.07);
-          box-shadow:0 0 60px rgba(168,85,247,0.1), 0 20px 40px rgba(0,0,0,0.4);
-          transform:translateY(-4px);
-        }
-        .pl-proj-card:hover::before { transform:scaleX(1); }
-        .pl-proj-icon-wrap { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.2); color:#a855f7; margin-bottom:1.25rem; transition:all 0.3s; flex-shrink:0; }
-        .pl-proj-card:hover .pl-proj-icon-wrap { background:rgba(168,85,247,0.2); box-shadow:0 0 20px rgba(168,85,247,0.3); }
-        .pl-proj-link { color:rgba(240,230,255,0.35); transition:color 0.2s; text-decoration:none; }
-        .pl-proj-link:hover { color:#a855f7; }
-        .pl-proj-img { width:100%; height:180px; object-fit:cover; border-radius:8px; display:block; margin-bottom:1.25rem; }
-      `}</style>
+    <section id="projects" className="relative py-28 px-6 overflow-hidden bg-[#010703]">
 
-      <div style={{ position:"absolute", top:"3rem", right:"3%", fontSize:"200px", fontWeight:900, color:"rgba(168,85,247,0.03)", pointerEvents:"none", lineHeight:1, userSelect:"none" }}>04</div>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full"
+          style={{ background: "radial-gradient(ellipse, rgba(0,230,118,0.06), transparent 70%)" }} />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,230,118,0.015)_1px,transparent_1px)] bg-[size:64px]" />
+      </div>
 
-      {/* Decorative plasma */}
-      <div style={{ position:"absolute", bottom:"-120px", right:"-120px", width:"500px", height:"500px", borderRadius:"50%", background:"radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)", pointerEvents:"none" }} />
+      <div className="max-w-5xl mx-auto relative z-10">
 
-      <div style={{ maxWidth:"1200px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <motion.div initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.7 }} style={{ marginBottom:"4rem" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"1rem" }}>
-            <span style={{ fontSize:"11px", fontWeight:800, letterSpacing:"0.4em", color:"rgba(168,85,247,0.5)", textTransform:"uppercase" }}>04</span>
-            <div style={{ width:"40px", height:"1px", background:"linear-gradient(90deg, #a855f7, transparent)" }} />
-            <FaBolt style={{ color:"#a855f7", fontSize:"12px", opacity:0.7 }} />
-          </div>
-          <h2 style={{ fontSize:"clamp(2rem, 4vw, 3rem)", fontWeight:900, letterSpacing:"-0.04em", color:"#f0e6ff", margin:0 }}>Projects</h2>
+        <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className="flex items-center gap-3 mb-3">
+          <span className="font-black text-base" style={{ color: "#00e676" }}>›</span>
+          <span className="text-[10px] font-black tracking-[0.4em] uppercase"
+            style={{ color: "rgba(0,230,118,0.7)" }}>04 — Projects</span>
         </motion.div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(320px,1fr))", gap:"1.5rem" }}>
-          {items.map((proj, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity:0, y:40 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5, delay:i * 0.08 }}
-              style={{ height:"100%" }}
-            >
-              <div className="pl-proj-card">
-                {/* Project image */}
-                {(proj.imageBase64 || proj.image) && (
-                  <img src={proj.imageBase64 || proj.image} alt={proj.title || proj.name} className="pl-proj-img" />
-                )}
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.05 }}
+          className="text-4xl sm:text-5xl font-black tracking-tighter text-white mb-4 uppercase">
+          Built Work
+        </motion.h2>
+        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="text-sm mb-16 max-w-md" style={{ color: "rgba(255,255,255,0.3)" }}>
+          Selected projects — from concept to deployment.
+        </motion.p>
 
-                {/* Top row: icon + links */}
-                <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.25rem" }}>
-                  <div className="pl-proj-icon-wrap">
-                    <FaCode size={16} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {data.projects.map((proj, index) => (
+            <motion.div key={index}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.07 }}
+              whileHover={{ y: -5 }}
+              className="group relative overflow-hidden transition-all duration-300"
+              style={{
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}>
+
+              {/* Top accent bar — expands on hover */}
+              <motion.div
+                className="absolute top-0 left-0 right-0 h-0.5 origin-left"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 + index * 0.06 }}
+                style={{ background: "linear-gradient(90deg, #00e676, rgba(0,230,118,0.2))" }} />
+
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{ background: "linear-gradient(135deg, rgba(0,230,118,0.04), transparent 60%)" }} />
+
+              {proj.imageBase64 ? (
+                <div className="relative h-44 overflow-hidden">
+                  <img src={proj.imageBase64} alt={proj.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108" />
+                  <div className="absolute inset-0"
+                    style={{ background: "linear-gradient(to bottom, transparent 40%, #010703)" }} />
+                  {/* Index */}
+                  <div className="absolute top-3 right-3 text-[10px] font-black tracking-widest"
+                    style={{ color: "rgba(255,255,255,0.15)" }}>
+                    {String(index + 1).padStart(2, "0")}
                   </div>
-                  <div style={{ display:"flex", gap:"12px", paddingTop:"4px" }}>
-                    {(proj.github || proj.githubUrl || proj.repo) && (
-                      <a href={proj.github || proj.githubUrl || proj.repo} target="_blank" rel="noopener noreferrer" className="pl-proj-link" aria-label="GitHub">
-                        <FaGithub size={17} />
+                  {/* Links on hover */}
+                  <div className="absolute bottom-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    {proj.github && (
+                      <a href={proj.github} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black text-white/80 hover:text-white transition-all backdrop-blur-sm"
+                        style={{ background: "rgba(1,7,3,0.9)", border: "1px solid rgba(255,255,255,0.15)" }}
+                        onClick={(e) => e.stopPropagation()}>
+                        <FaGithub className="w-3 h-3" /> Code
                       </a>
                     )}
-                    {(proj.demo || proj.liveUrl || proj.live || proj.url || proj.link) && (
-                      <a href={proj.demo || proj.liveUrl || proj.live || proj.url || proj.link} target="_blank" rel="noopener noreferrer" className="pl-proj-link" aria-label="Live demo">
-                        <FaExternalLinkAlt size={15} />
+                    {proj.demo && (
+                      <a href={proj.demo} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black text-[#010703] transition-all backdrop-blur-sm hover:opacity-85"
+                        style={{ background: "#00e676" }}
+                        onClick={(e) => e.stopPropagation()}>
+                        <FaExternalLinkAlt className="w-2.5 h-2.5" /> Live
                       </a>
                     )}
                   </div>
                 </div>
+              ) : (
+                <div className="relative h-20 flex items-center px-6 overflow-hidden"
+                  style={{ background: "rgba(0,230,118,0.03)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div className="absolute right-3 top-2 text-6xl font-black select-none leading-none"
+                    style={{ color: "rgba(0,230,118,0.04)", WebkitTextStrokeWidth: "1px", WebkitTextStrokeColor: "rgba(0,230,118,0.08)" }}>
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+                  <div className="relative z-10 flex items-center justify-between w-full">
+                    <div className="w-9 h-9 flex items-center justify-center"
+                      style={{ border: "1px solid rgba(0,230,118,0.2)", background: "rgba(0,230,118,0.05)" }}>
+                      <FaTerminal className="w-4 h-4" style={{ color: "rgba(0,230,118,0.6)" }} />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {proj.github && (
+                        <a href={proj.github} target="_blank" rel="noopener noreferrer"
+                          className="transition-colors" style={{ color: "rgba(255,255,255,0.25)" }}>
+                          <FaGithub className="w-4 h-4 hover:text-white" />
+                        </a>
+                      )}
+                      {proj.demo && (
+                        <a href={proj.demo} target="_blank" rel="noopener noreferrer"
+                          className="transition-colors" style={{ color: "rgba(255,255,255,0.25)" }}>
+                          <FaExternalLinkAlt className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                {/* Title + description */}
-                <h3 style={{ fontSize:"17px", fontWeight:800, color:"#f0e6ff", margin:"0 0 10px", letterSpacing:"-0.02em", lineHeight:1.3 }}>
-                  {proj.title || proj.name || "Untitled"}
+              <div className="p-6">
+                <h3 className="text-base font-black text-white mb-2 group-hover:text-[#00e676] transition-colors duration-300 uppercase tracking-tight">
+                  {proj.title}
                 </h3>
-                <p style={{ fontSize:"13px", color:"rgba(240,230,255,0.45)", lineHeight:1.7, margin:0, flex:1 }}>
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
                   {proj.description}
                 </p>
 
-                {/* Tech tags */}
-                {(() => {
-                  const stack = proj.stack || proj.tags || proj.technologies || proj.tech;
-                  if (!Array.isArray(stack) || stack.length === 0) return null;
-                  return (
-                    <div style={{ display:"flex", flexWrap:"wrap", gap:"6px", marginTop:"1.5rem", paddingTop:"1rem", borderTop:"1px solid rgba(168,85,247,0.08)" }}>
-                      {stack.map((t, j) => (
-                        <span key={j} style={{
-                          fontSize:"10px", fontWeight:600, padding:"3px 10px",
-                          borderRadius:"4px",
-                          background: j % 2 === 0 ? "rgba(168,85,247,0.08)" : "rgba(34,211,238,0.06)",
-                          border: j % 2 === 0 ? "1px solid rgba(168,85,247,0.2)" : "1px solid rgba(34,211,238,0.15)",
-                          color: j % 2 === 0 ? "rgba(168,85,247,0.8)" : "rgba(34,211,238,0.7)",
-                          letterSpacing:"0.05em",
+                {proj.stack?.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-5 pt-4"
+                    style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                    {proj.stack.filter(t => t?.trim()).map((tech) => (
+                      <span key={tech}
+                        className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1"
+                        style={{
+                          color: "rgba(0,230,118,0.6)",
+                          background: "rgba(0,230,118,0.05)",
+                          border: "1px solid rgba(0,230,118,0.1)",
                         }}>
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  );
-                })()}
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}

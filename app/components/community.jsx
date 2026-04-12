@@ -1,90 +1,95 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
-import { FaBolt, FaExternalLinkAlt } from "react-icons/fa";
+import { FaLeaf, FaExternalLinkAlt } from "react-icons/fa";
 
 export default function PortfolioCommunity({ data }) {
-  const items = data?.community;
-  if (!items || !Array.isArray(items) || items.length === 0) return null;
+  if (!data?.community || !Array.isArray(data.community) || data.community.length === 0) return null;
 
   return (
-    <section id="community" style={{ background:"#05020f", padding:"8rem 1.5rem", position:"relative", overflow:"hidden" }}>
-      <style>{`
-        .pl-com-card {
-          position:relative; padding:2rem;
-          border:1px solid rgba(168,85,247,0.1);
-          border-radius:12px; background:rgba(168,85,247,0.03);
-          transition:all 0.3s ease; overflow:hidden;
-        }
-        .pl-com-card::after {
-          content:'';
-          position:absolute; inset:0;
-          background:linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(34,211,238,0.04) 100%);
-          opacity:0; transition:opacity 0.3s;
-        }
-        .pl-com-card:hover { border-color:rgba(168,85,247,0.3); transform:translateY(-3px); box-shadow:0 0 40px rgba(168,85,247,0.1); }
-        .pl-com-card:hover::after { opacity:1; }
-        .pl-com-link { color:rgba(168,85,247,0.6); text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; transition:color 0.2s; }
-        .pl-com-link:hover { color:#a855f7; }
-      `}</style>
+    <section id="community" className="relative py-28 px-6 overflow-hidden bg-[#010703]">
 
-      <div style={{ position:"absolute", top:"3rem", right:"3%", fontSize:"200px", fontWeight:900, color:"rgba(168,85,247,0.03)", pointerEvents:"none", lineHeight:1, userSelect:"none" }}>06</div>
-      <div style={{ position:"absolute", bottom:"-80px", left:"-80px", width:"350px", height:"350px", borderRadius:"50%", background:"radial-gradient(circle, rgba(34,211,238,0.07) 0%, transparent 70%)", pointerEvents:"none" }} />
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[400px] rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(0,230,118,0.05), transparent 70%)" }} />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,230,118,0.015)_1px,transparent_1px)] bg-[size:64px]" />
+      </div>
 
-      <div style={{ maxWidth:"1200px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <motion.div initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.7 }} style={{ marginBottom:"4rem" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"1rem" }}>
-            <span style={{ fontSize:"11px", fontWeight:800, letterSpacing:"0.4em", color:"rgba(168,85,247,0.5)", textTransform:"uppercase" }}>06</span>
-            <div style={{ width:"40px", height:"1px", background:"linear-gradient(90deg, #a855f7, transparent)" }} />
-            <FaBolt style={{ color:"#a855f7", fontSize:"12px", opacity:0.7 }} />
-          </div>
-          <h2 style={{ fontSize:"clamp(2rem, 4vw, 3rem)", fontWeight:900, letterSpacing:"-0.04em", color:"#f0e6ff", margin:0 }}>Impact & Community</h2>
+      <div className="max-w-6xl mx-auto relative z-10">
+
+        <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className="flex items-center gap-3 mb-3">
+          <span className="font-black text-base" style={{ color: "#00e676" }}>›</span>
+          <span className="text-[10px] font-black tracking-[0.4em] uppercase"
+            style={{ color: "rgba(0,230,118,0.7)" }}>06 — Impact</span>
         </motion.div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px,1fr))", gap:"1.25rem" }}>
-          {items.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5, delay:i * 0.07 }}
-            >
-              <div className="pl-com-card">
-                {/* Bolt marker + role */}
-                <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"0.75rem" }}>
-                  <FaBolt style={{
-                    color: i % 2 === 0 ? "#a855f7" : "#22d3ee",
-                    fontSize:"13px",
-                    filter: `drop-shadow(0 0 6px ${i % 2 === 0 ? "rgba(168,85,247,0.7)" : "rgba(34,211,238,0.7)"})`,
-                  }} />
-                  <span style={{ fontSize:"10px", fontWeight:700, letterSpacing:"0.25em", color: i % 2 === 0 ? "rgba(168,85,247,0.7)" : "rgba(34,211,238,0.7)", textTransform:"uppercase" }}>
-                    {item.role || item.type || "Contributor"}
-                  </span>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.05 }}
+          className="text-4xl sm:text-5xl font-black tracking-tighter text-white mb-4 uppercase">
+          Community
+        </motion.h2>
+        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="text-sm mb-16 max-w-md" style={{ color: "rgba(255,255,255,0.3)" }}>
+          Giving back — organisations and causes that matter.
+        </motion.p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {data.community.map((item, index) => {
+            if (!item) return null;
+            return (
+              <motion.div key={index}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ type: "spring", stiffness: 100, damping: 15, delay: index * 0.08 }}
+                whileHover={{ y: -5 }}
+                className="group relative overflow-hidden transition-all duration-300"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}>
+
+                {/* Top green bar */}
+                <div className="absolute top-0 left-0 right-0 h-0.5"
+                  style={{ background: "linear-gradient(90deg, #00e676, rgba(0,230,118,0.1))" }} />
+
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+                  style={{ background: "linear-gradient(135deg, rgba(0,230,118,0.04), transparent)" }} />
+
+                <div className="p-6 relative z-10">
+                  <div className="flex items-start justify-between mb-5">
+                    <div className="w-10 h-10 flex items-center justify-center transition-all duration-300"
+                      style={{
+                        background: "rgba(0,230,118,0.08)",
+                        border: "1px solid rgba(0,230,118,0.2)",
+                      }}>
+                      <FaLeaf className="w-4 h-4" style={{ color: "rgba(0,230,118,0.7)" }} />
+                    </div>
+                    {item.link && (
+                      <a href={item.link} target="_blank" rel="noopener noreferrer"
+                        className="transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}
+                        aria-label={`Visit ${item.organization}`}>
+                        <FaExternalLinkAlt className="w-3.5 h-3.5 hover:text-[#00e676]" />
+                      </a>
+                    )}
+                  </div>
+
+                  <h3 className="font-black text-white mb-1.5 group-hover:text-[#00e676] transition-colors duration-300 uppercase tracking-tight">
+                    {item.role || "Contributor"}
+                  </h3>
+                  <p className="text-[11px] font-black uppercase tracking-widest mb-3"
+                    style={{ color: "rgba(0,230,118,0.6)" }}>
+                    {item.organization || "Community Initiative"}
+                  </p>
+                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
+                    {item.description || ""}
+                  </p>
                 </div>
-
-                <h3 style={{ fontSize:"16px", fontWeight:800, color:"#f0e6ff", margin:"0 0 8px", letterSpacing:"-0.02em" }}>
-                  {item.title || item.name || item.organization}
-                </h3>
-
-                {item.description && (
-                  <p style={{ fontSize:"13px", color:"rgba(240,230,255,0.5)", lineHeight:1.65, margin:"0 0 1rem" }}>
-                    {item.description}
-                  </p>
-                )}
-
-                {item.year && (
-                  <p style={{ fontSize:"11px", color:"rgba(240,230,255,0.25)", marginBottom:"0.75rem" }}>
-                    {item.year}
-                  </p>
-                )}
-
-                {item.link && (
-                  <a href={item.link} target="_blank" rel="noopener noreferrer" className="pl-com-link">
-                    View <FaExternalLinkAlt style={{ fontSize:"10px" }} />
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

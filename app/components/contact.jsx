@@ -1,191 +1,186 @@
 "use client";
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { FaBolt, FaEnvelope, FaUser, FaPaperPlane, FaGithub, FaLinkedin } from "react-icons/fa";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaPaperPlane, FaEnvelope, FaGithub, FaLinkedin, FaCheckCircle, FaCircleNotch } from "react-icons/fa";
 
 export default function PortfolioContact({ data }) {
-  const [form, setForm]       = useState({ name:"", email:"", message:"" });
-  const [status, setStatus]   = useState("idle"); // idle | sending | sent | error
-  const [focused, setFocused] = useState(null);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState("idle");
 
-  const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
+  const hasForm = !!data?.web3forms_key;
+
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) return;
-    setStatus("sending");
+    if (!hasForm) return;
+    setStatus("loading");
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json", Accept:"application/json" },
-        body:JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `Portfolio contact from ${form.name}`,
-          from_name: form.name,
-          email: form.email,
-          message: form.message,
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          access_key: data.web3forms_key,
+          subject: `New Portfolio Message from ${formData.name}`,
+          from_name: "Portfolio Contact Form",
           botcheck: "",
         }),
       });
-      const r = await res.json();
-      setStatus(r.success ? "sent" : "error");
-    } catch {
-      setStatus("error");
-    }
+      const result = await response.json();
+      if (result.success) {
+        setStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 5000);
+      } else setStatus("error");
+    } catch { setStatus("error"); }
   };
 
-  const inputStyle = (field) => ({
-    width:"100%", background:"rgba(168,85,247,0.04)", border:"none",
-    borderBottom:`1px solid ${focused === field ? "#a855f7" : "rgba(168,85,247,0.15)"}`,
-    color:"#f0e6ff", fontSize:"14px", padding:"12px 0", outline:"none",
-    transition:"border-color 0.25s",
-    boxShadow: focused === field ? "0 2px 0 rgba(168,85,247,0.3)" : "none",
-  });
+  const contactLinks = [
+    { show: data?.email, icon: FaEnvelope, label: "Email", value: data?.email, href: `mailto:${data?.email}` },
+    { show: data?.github, icon: FaGithub, label: "GitHub", value: "View Profile", href: data?.github },
+    { show: data?.linkedin, icon: FaLinkedin, label: "LinkedIn", value: "Connect", href: data?.linkedin },
+  ].filter(l => l.show);
+
+  if (!hasForm && contactLinks.length === 0) return null;
 
   return (
-    <section id="contact" style={{ background:"#05020f", padding:"8rem 1.5rem", position:"relative", overflow:"hidden" }}>
-      <style>{`
-        .pl-submit-btn {
-          display:inline-flex; align-items:center; gap:10px; cursor:pointer;
-          padding:14px 36px; border-radius:999px; border:none;
-          background:linear-gradient(135deg, #a855f7, #7c3aed);
-          color:#fff; font-size:13px; font-weight:700; letter-spacing:0.1em;
-          box-shadow:0 0 30px rgba(168,85,247,0.3);
-          transition:all 0.25s ease;
-        }
-        .pl-submit-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 0 50px rgba(168,85,247,0.5); background:linear-gradient(135deg, #b97aff, #9333ea); }
-        .pl-submit-btn:disabled { opacity:0.5; cursor:not-allowed; }
-        ::placeholder { color:rgba(240,230,255,0.2); }
-        textarea { resize:none; font-family:inherit; }
-        @media (max-width: 767px) { .pl-two-col { display: block !important; } }
-      `}</style>
+    <section id="contact" className="relative py-28 px-6 overflow-hidden bg-[#020b04]">
 
-      {/* Ghost number */}
-      <div style={{ position:"absolute", top:"3rem", right:"3%", fontSize:"200px", fontWeight:900, color:"rgba(168,85,247,0.03)", pointerEvents:"none", lineHeight:1, userSelect:"none" }}>07</div>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full"
+          style={{ background: "radial-gradient(ellipse, rgba(0,230,118,0.07), transparent 70%)" }} />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,230,118,0.015)_1px,transparent_1px)] bg-[size:64px]" />
+      </div>
 
-      {/* Plasma orbs */}
-      <div style={{ position:"absolute", top:"-100px", right:"-80px", width:"450px", height:"450px", borderRadius:"50%", background:"radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)", pointerEvents:"none" }} />
-      <div style={{ position:"absolute", bottom:"-100px", left:"-80px", width:"350px", height:"350px", borderRadius:"50%", background:"radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%)", pointerEvents:"none" }} />
+      <div className="max-w-4xl mx-auto relative z-10">
 
-      <div style={{ maxWidth:"1200px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <motion.div initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.7 }} style={{ marginBottom:"4rem" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"1rem" }}>
-            <span style={{ fontSize:"11px", fontWeight:800, letterSpacing:"0.4em", color:"rgba(168,85,247,0.5)", textTransform:"uppercase" }}>07</span>
-            <div style={{ width:"40px", height:"1px", background:"linear-gradient(90deg, #a855f7, transparent)" }} />
-            <FaBolt style={{ color:"#a855f7", fontSize:"12px", opacity:0.7 }} />
-          </div>
-          <h2 style={{ fontSize:"clamp(2rem, 4vw, 3rem)", fontWeight:900, letterSpacing:"-0.04em", color:"#f0e6ff", margin:"0 0 1rem" }}>Let's Connect</h2>
-          <p style={{ fontSize:"15px", color:"rgba(240,230,255,0.45)", maxWidth:"480px", lineHeight:1.7, margin:0 }}>
-            Have a project in mind or just want to talk? Send a message and I'll get back to you.
-          </p>
+        <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className={`flex items-center gap-3 mb-3 ${!hasForm ? "justify-center" : ""}`}>
+          <span className="font-black text-base" style={{ color: "#00e676" }}>›</span>
+          <span className="text-[10px] font-black tracking-[0.4em] uppercase"
+            style={{ color: "rgba(0,230,118,0.7)" }}>07 — Connect</span>
         </motion.div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"5rem", alignItems:"start" }}
-          className="pl-two-col"
-        >
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.05 }}
+          className={`text-4xl sm:text-5xl font-black tracking-tighter text-white mb-4 uppercase ${!hasForm ? "text-center" : ""}`}>
+          Get In Touch
+        </motion.h2>
+        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className={`text-sm mb-16 max-w-md ${!hasForm ? "text-center mx-auto" : ""}`}
+          style={{ color: "rgba(255,255,255,0.3)" }}>
+          {hasForm ? "Have a project or opportunity? Send a message." : "Find me across the web."}
+        </motion.p>
+
+        <div className={`grid gap-10 ${hasForm ? "grid-cols-1 lg:grid-cols-5" : "grid-cols-1 max-w-md mx-auto"}`}>
+
+          {/* Links */}
+          <motion.div initial={{ opacity: 0, x: hasForm ? -40 : 0 }} whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }} transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className={`${hasForm ? "lg:col-span-2" : ""} space-y-3`}>
+            {contactLinks.map((link, i) => (
+              <motion.a key={i} href={link.href} target="_blank" rel="noopener noreferrer"
+                whileHover={{ x: 6 }}
+                className="group flex items-center gap-4 p-4 transition-all duration-300"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(0,230,118,0.25)"}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}>
+                <div className="w-11 h-11 flex items-center justify-center flex-shrink-0 transition-all duration-300"
+                  style={{ background: "rgba(0,230,118,0.06)", border: "1px solid rgba(0,230,118,0.15)" }}>
+                  <link.icon className="w-5 h-5" style={{ color: "rgba(0,230,118,0.7)" }} />
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider mb-0.5"
+                    style={{ color: "rgba(255,255,255,0.3)" }}>{link.label}</p>
+                  <p className="text-sm font-bold text-white/70 group-hover:text-white transition-colors">{link.value}</p>
+                </div>
+              </motion.a>
+            ))}
+          </motion.div>
+
           {/* Form */}
-          <motion.div initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.1 }}>
-            {status === "sent" ? (
-              <div style={{ padding:"3rem", textAlign:"center", border:"1px solid rgba(168,85,247,0.2)", borderRadius:"14px", background:"rgba(168,85,247,0.05)" }}>
-                <div style={{ fontSize:"48px", marginBottom:"1rem" }}>⚡</div>
-                <h3 style={{ fontSize:"20px", fontWeight:800, color:"#f0e6ff", marginBottom:"0.5rem" }}>Message Sent!</h3>
-                <p style={{ color:"rgba(240,230,255,0.5)", fontSize:"14px" }}>I'll be in touch soon.</p>
+          {hasForm && (
+            <motion.div initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }} transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.2 }}
+              className="lg:col-span-3">
+              <div className="p-8"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {["name", "email"].map((field) => (
+                      <div key={field} className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-widest"
+                          style={{ color: "rgba(255,255,255,0.3)" }}>
+                          {field === "name" ? "Name" : "Email"}
+                        </label>
+                        <input name={field} type={field === "email" ? "email" : "text"}
+                          value={formData[field]} onChange={handleChange} required
+                          className="w-full px-4 py-3 text-sm text-white transition-all outline-none"
+                          style={{
+                            background: "rgba(255,255,255,0.04)",
+                            border: "1px solid rgba(255,255,255,0.08)",
+                            color: "rgba(255,255,255,0.85)",
+                          }}
+                          onFocus={(e) => { e.target.style.borderColor = "rgba(0,230,118,0.4)"; e.target.style.background = "rgba(0,230,118,0.04)"; }}
+                          onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.08)"; e.target.style.background = "rgba(255,255,255,0.04)"; }} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest"
+                      style={{ color: "rgba(255,255,255,0.3)" }}>Message</label>
+                    <textarea name="message" value={formData.message} onChange={handleChange}
+                      required rows={5}
+                      className="w-full px-4 py-3 text-sm text-white transition-all outline-none resize-none"
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        color: "rgba(255,255,255,0.85)",
+                      }}
+                      onFocus={(e) => { e.target.style.borderColor = "rgba(0,230,118,0.4)"; e.target.style.background = "rgba(0,230,118,0.04)"; }}
+                      onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.08)"; e.target.style.background = "rgba(255,255,255,0.04)"; }} />
+                  </div>
+
+                  <motion.button type="submit"
+                    disabled={status === "loading" || status === "success"}
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-3 px-8 py-4 text-sm font-black uppercase tracking-wider transition-all duration-300"
+                    style={{
+                      background: status === "success" ? "rgba(0,230,118,0.85)" : "#00e676",
+                      color: "#020b04",
+                    }}>
+                    <AnimatePresence mode="wait">
+                      {status === "loading" ? (
+                        <motion.span key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                          className="flex items-center gap-2">
+                          <FaCircleNotch className="w-4 h-4 animate-spin" /> Sending...
+                        </motion.span>
+                      ) : status === "success" ? (
+                        <motion.span key="success" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+                          className="flex items-center gap-2">
+                          <FaCheckCircle className="w-4 h-4" /> Sent!
+                        </motion.span>
+                      ) : (
+                        <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                          className="flex items-center gap-2">
+                          Send Message <FaPaperPlane className="w-4 h-4" />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </motion.button>
+                </form>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display:"flex", flexDirection:"column", gap:"2rem" }}>
-                {/* Name */}
-                <div>
-                  <label style={{ display:"flex", alignItems:"center", gap:"8px", fontSize:"10px", fontWeight:700, letterSpacing:"0.3em", color:"rgba(168,85,247,0.6)", textTransform:"uppercase", marginBottom:"10px" }}>
-                    <FaUser style={{ fontSize:"9px" }} /> Name
-                  </label>
-                  <input
-                    type="text" placeholder="Your name" required
-                    value={form.name} onChange={(e) => setForm({...form, name:e.target.value})}
-                    onFocus={() => setFocused("name")} onBlur={() => setFocused(null)}
-                    style={inputStyle("name")}
-                  />
-                </div>
-                {/* Email */}
-                <div>
-                  <label style={{ display:"flex", alignItems:"center", gap:"8px", fontSize:"10px", fontWeight:700, letterSpacing:"0.3em", color:"rgba(168,85,247,0.6)", textTransform:"uppercase", marginBottom:"10px" }}>
-                    <FaEnvelope style={{ fontSize:"9px" }} /> Email
-                  </label>
-                  <input
-                    type="email" placeholder="your@email.com" required
-                    value={form.email} onChange={(e) => setForm({...form, email:e.target.value})}
-                    onFocus={() => setFocused("email")} onBlur={() => setFocused(null)}
-                    style={inputStyle("email")}
-                  />
-                </div>
-                {/* Message */}
-                <div>
-                  <label style={{ display:"flex", alignItems:"center", gap:"8px", fontSize:"10px", fontWeight:700, letterSpacing:"0.3em", color:"rgba(168,85,247,0.6)", textTransform:"uppercase", marginBottom:"10px" }}>
-                    <FaBolt style={{ fontSize:"9px" }} /> Message
-                  </label>
-                  <textarea
-                    rows={5} placeholder="Tell me about your project..." required
-                    value={form.message} onChange={(e) => setForm({...form, message:e.target.value})}
-                    onFocus={() => setFocused("message")} onBlur={() => setFocused(null)}
-                    style={{ ...inputStyle("message"), display:"block" }}
-                  />
-                </div>
-
-                {status === "error" && (
-                  <p style={{ fontSize:"12px", color:"rgba(248,113,113,0.8)" }}>Something went wrong. Please try again.</p>
-                )}
-
-                <div>
-                  <button type="submit" disabled={status === "sending"} className="pl-submit-btn">
-                    {status === "sending" ? "Sending..." : <><FaPaperPlane /> Send Message</>}
-                  </button>
-                </div>
-              </form>
-            )}
-          </motion.div>
-
-          {/* Info panel */}
-          <motion.div initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.25 }}>
-            {/* Electric divider */}
-            <div style={{ height:"1px", background:"linear-gradient(90deg, #a855f7, #22d3ee, transparent)", marginBottom:"2.5rem" }} />
-
-            {data?.email && (
-              <div style={{ marginBottom:"2rem" }}>
-                <p style={{ fontSize:"10px", fontWeight:700, letterSpacing:"0.3em", color:"rgba(240,230,255,0.3)", textTransform:"uppercase", marginBottom:"6px" }}>Email</p>
-                <a href={`mailto:${data.email}`} style={{ fontSize:"15px", color:"#a855f7", textDecoration:"none", fontWeight:600 }}>
-                  {data.email}
-                </a>
-              </div>
-            )}
-
-            {data?.location && (
-              <div style={{ marginBottom:"2rem" }}>
-                <p style={{ fontSize:"10px", fontWeight:700, letterSpacing:"0.3em", color:"rgba(240,230,255,0.3)", textTransform:"uppercase", marginBottom:"6px" }}>Location</p>
-                <p style={{ fontSize:"15px", color:"rgba(240,230,255,0.65)", margin:0, fontWeight:500 }}>{data.location}</p>
-              </div>
-            )}
-
-            {/* Social links */}
-            <div style={{ display:"flex", gap:"1rem", marginTop:"2rem" }}>
-              {data?.github && (
-                <a href={data.github} target="_blank" rel="noopener noreferrer"
-                  style={{ width:"44px", height:"44px", borderRadius:"10px", border:"1px solid rgba(168,85,247,0.2)", background:"rgba(168,85,247,0.06)", display:"flex", alignItems:"center", justifyContent:"center", color:"rgba(168,85,247,0.7)", textDecoration:"none", transition:"all 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor="rgba(168,85,247,0.5)"; e.currentTarget.style.background="rgba(168,85,247,0.15)"; e.currentTarget.style.color="#a855f7"; e.currentTarget.style.boxShadow="0 0 20px rgba(168,85,247,0.3)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor="rgba(168,85,247,0.2)"; e.currentTarget.style.background="rgba(168,85,247,0.06)"; e.currentTarget.style.color="rgba(168,85,247,0.7)"; e.currentTarget.style.boxShadow="none"; }}
-                >
-                  <FaGithub size={18} />
-                </a>
-              )}
-              {data?.linkedin && (
-                <a href={data.linkedin} target="_blank" rel="noopener noreferrer"
-                  style={{ width:"44px", height:"44px", borderRadius:"10px", border:"1px solid rgba(34,211,238,0.2)", background:"rgba(34,211,238,0.05)", display:"flex", alignItems:"center", justifyContent:"center", color:"rgba(34,211,238,0.7)", textDecoration:"none", transition:"all 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor="rgba(34,211,238,0.5)"; e.currentTarget.style.background="rgba(34,211,238,0.12)"; e.currentTarget.style.color="#22d3ee"; e.currentTarget.style.boxShadow="0 0 20px rgba(34,211,238,0.25)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor="rgba(34,211,238,0.2)"; e.currentTarget.style.background="rgba(34,211,238,0.05)"; e.currentTarget.style.color="rgba(34,211,238,0.7)"; e.currentTarget.style.boxShadow="none"; }}
-                >
-                  <FaLinkedin size={18} />
-                </a>
-              )}
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
